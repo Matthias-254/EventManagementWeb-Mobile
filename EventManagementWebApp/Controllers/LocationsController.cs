@@ -22,7 +22,7 @@ namespace EventManagementWebApp.Controllers
         // GET: Locations
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Location.ToListAsync());
+            return View(await _context.Location.Where(l => l.Deleted > DateTime.Now).ToListAsync());
         }
 
         // GET: Locations/Details/5
@@ -46,7 +46,7 @@ namespace EventManagementWebApp.Controllers
         // GET: Locations/Create
         public IActionResult Create()
         {
-            return View();
+            return View(new Location());
         }
 
         // POST: Locations/Create
@@ -142,7 +142,8 @@ namespace EventManagementWebApp.Controllers
             var location = await _context.Location.FindAsync(id);
             if (location != null)
             {
-                _context.Location.Remove(location);
+                location.Deleted = DateTime.Now;
+                _context.Location.Update(location);
             }
 
             await _context.SaveChangesAsync();

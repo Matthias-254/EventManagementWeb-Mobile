@@ -22,7 +22,7 @@ namespace EventManagementWebApp.Controllers
         // GET: Events
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Event.Include(e => e.Location);
+            var applicationDbContext = _context.Event.Where(e => e.Deleted > DateTime.Now).Include(e => e.Location);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -49,7 +49,7 @@ namespace EventManagementWebApp.Controllers
         public IActionResult Create()
         {
             ViewData["LocationId"] = new SelectList(_context.Location, "Id", "Address");
-            return View();
+            return View(new Event());
         }
 
         // POST: Events/Create
@@ -149,7 +149,8 @@ namespace EventManagementWebApp.Controllers
             var @event = await _context.Event.FindAsync(id);
             if (@event != null)
             {
-                _context.Event.Remove(@event);
+                @event.Deleted = DateTime.Now;
+                _context.Event.Update(@event);
             }
 
             await _context.SaveChangesAsync();

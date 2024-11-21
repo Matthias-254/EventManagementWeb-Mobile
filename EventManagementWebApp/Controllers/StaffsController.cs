@@ -22,7 +22,7 @@ namespace EventManagementWebApp.Controllers
         // GET: Staffs
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Staff.ToListAsync());
+            return View(await _context.Staff.Where(s => s.Deleted > DateTime.Now).ToListAsync());
         }
 
         // GET: Staffs/Details/5
@@ -46,7 +46,7 @@ namespace EventManagementWebApp.Controllers
         // GET: Staffs/Create
         public IActionResult Create()
         {
-            return View();
+            return View(new Staff());
         }
 
         // POST: Staffs/Create
@@ -142,7 +142,8 @@ namespace EventManagementWebApp.Controllers
             var staff = await _context.Staff.FindAsync(id);
             if (staff != null)
             {
-                _context.Staff.Remove(staff);
+                staff.Deleted = DateTime.Now;
+                _context.Staff.Update(staff);
             }
 
             await _context.SaveChangesAsync();
