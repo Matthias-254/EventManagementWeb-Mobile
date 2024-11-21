@@ -10,23 +10,22 @@ using EventManagementWebApp.Models;
 
 namespace EventManagementWebApp.Controllers
 {
-    public class EventsController : Controller
+    public class StaffsController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public EventsController(ApplicationDbContext context)
+        public StaffsController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: Events
+        // GET: Staffs
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Event.Include(e => e.Location);
-            return View(await applicationDbContext.ToListAsync());
+            return View(await _context.Staff.ToListAsync());
         }
 
-        // GET: Events/Details/5
+        // GET: Staffs/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -34,42 +33,39 @@ namespace EventManagementWebApp.Controllers
                 return NotFound();
             }
 
-            var @event = await _context.Event
-                .Include(e => e.Location)
+            var staff = await _context.Staff
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (@event == null)
+            if (staff == null)
             {
                 return NotFound();
             }
 
-            return View(@event);
+            return View(staff);
         }
 
-        // GET: Events/Create
+        // GET: Staffs/Create
         public IActionResult Create()
         {
-            ViewData["LocationId"] = new SelectList(_context.Location, "Id", "Address");
             return View();
         }
 
-        // POST: Events/Create
+        // POST: Staffs/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description,StartDate,EndDate,LocationId,Deleted")] Event @event)
+        public async Task<IActionResult> Create([Bind("Id,Name,FirstName,LastName,Deleted")] Staff staff)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(@event);
+                _context.Add(staff);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["LocationId"] = new SelectList(_context.Location, "Id", "Address", @event.LocationId);
-            return View(@event);
+            return View(staff);
         }
 
-        // GET: Events/Edit/5
+        // GET: Staffs/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -77,23 +73,22 @@ namespace EventManagementWebApp.Controllers
                 return NotFound();
             }
 
-            var @event = await _context.Event.FindAsync(id);
-            if (@event == null)
+            var staff = await _context.Staff.FindAsync(id);
+            if (staff == null)
             {
                 return NotFound();
             }
-            ViewData["LocationId"] = new SelectList(_context.Location, "Id", "Address", @event.LocationId);
-            return View(@event);
+            return View(staff);
         }
 
-        // POST: Events/Edit/5
+        // POST: Staffs/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,StartDate,EndDate,LocationId,Deleted")] Event @event)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,FirstName,LastName,Deleted")] Staff staff)
         {
-            if (id != @event.Id)
+            if (id != staff.Id)
             {
                 return NotFound();
             }
@@ -102,12 +97,12 @@ namespace EventManagementWebApp.Controllers
             {
                 try
                 {
-                    _context.Update(@event);
+                    _context.Update(staff);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!EventExists(@event.Id))
+                    if (!StaffExists(staff.Id))
                     {
                         return NotFound();
                     }
@@ -118,11 +113,10 @@ namespace EventManagementWebApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["LocationId"] = new SelectList(_context.Location, "Id", "Address", @event.LocationId);
-            return View(@event);
+            return View(staff);
         }
 
-        // GET: Events/Delete/5
+        // GET: Staffs/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -130,35 +124,34 @@ namespace EventManagementWebApp.Controllers
                 return NotFound();
             }
 
-            var @event = await _context.Event
-                .Include(e => e.Location)
+            var staff = await _context.Staff
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (@event == null)
+            if (staff == null)
             {
                 return NotFound();
             }
 
-            return View(@event);
+            return View(staff);
         }
 
-        // POST: Events/Delete/5
+        // POST: Staffs/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var @event = await _context.Event.FindAsync(id);
-            if (@event != null)
+            var staff = await _context.Staff.FindAsync(id);
+            if (staff != null)
             {
-                _context.Event.Remove(@event);
+                _context.Staff.Remove(staff);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool EventExists(int id)
+        private bool StaffExists(int id)
         {
-            return _context.Event.Any(e => e.Id == id);
+            return _context.Staff.Any(e => e.Id == id);
         }
     }
 }

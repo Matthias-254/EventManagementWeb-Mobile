@@ -12,5 +12,6 @@ namespace EventManagementWebApp.Data
         }
         public DbSet<EventManagementWebApp.Models.Event> Event { get; set; } = default!;
         public DbSet<EventManagementWebApp.Models.Location> Location { get; set; } = default!;
+        public DbSet<EventManagementWebApp.Models.Staff> Staff { get; set; } = default!;
     }
 }
